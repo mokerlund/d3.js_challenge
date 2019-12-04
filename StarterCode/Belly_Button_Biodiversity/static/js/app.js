@@ -1,35 +1,64 @@
 function buildMetadata(sample) {
+  d3.json(`/metadata/${sample}`).then((data) => {
+    var sampleMetadata = d3.select("#sample-metadata");
 
-  // @TODO: Complete the following function that builds the metadata panel
-  // Use `d3.json` to fetch the metadata for a sample
-    // Use d3 to select the panel with id of `#sample-metadata`
-    // Use `.html("") to clear any existing metadata
-  var htmlSampleMetadata = d3.json("#sample-metadata").html("");
-  var sampleMetadata = d3.json(`/metadata/${sample}`);
+    sampleMetadata.html("");
+  
 
-  htmlSampleMetadata.html(`${sampleMetadata}`);
+  Object.entries(data).forEach(([key, value]) => {
+    sampleMetadata.append("h6").text(`${key}: ${value}`);
+  });
 
-  sampleObject = Object.entries(sampleMetadata);
-    // Use `Object.entries` to add each key and value pair to the panel
-    // Hint: Inside the loop, you will need to use d3 to append new
-    // tags for each key-value in the metadata.
-  console.log(sampleObject);
+  // htmlSampleMetadata.html(`${sampleMetadata}`);
 
-
-
-
-
+  });
 }
 
 function buildCharts(sample) {
+  d3.json(`/samples/${sample}`).then((data) => {
+    
+    console.log(data);
 
-  // @TODO: Use `d3.json` to fetch the sample data for the plots
-  sampleData = d3.json(`/samples/${sample}`);  
-    // @TODO: Build a Bubble Chart using the sample data
-  
-    // @TODO: Build a Pie Chart
-    // HINT: You will need to use slice() to grab the top 10 sample_values,
-    // otu_ids, and labels (10 each).
+    var bubbleTrace = {
+      type: "scatter",
+      mode: "marker",
+      name: "Belly Buttons",
+      text: "otu_labels",
+      x: data.otu_ids,
+      y: data.sample_values,
+      marker: {
+        size : "sample_values",
+        color: "otu_ids"}
+    };
+    var data = [trace];
+
+    var bubbleLayout = {
+      margin: {t:0},
+      hovermode: "closest",
+      xaxis: {
+        title: "OTU ID",
+      }
+    };
+
+    Plotly.plot("bubble", bubbleTrace, bubbleLayout);
+  });  
+
+    var pieData = [
+      {
+        values: sample_values.slice(0, 10),
+        labels: otu_ids.slice(0, 10),
+        hovertext: otu_labels.slice(0, 10),
+        hoverinfo: "hovertext",
+        type: "pie"
+      }
+    ];
+
+    var pieLayout = {
+      margin: { t: 0, l: 0 }
+    };
+
+    Plotly.plot("pie", pieData, pieLayout);
+  });
 }
 
 function init() {
