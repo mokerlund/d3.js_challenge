@@ -54,7 +54,7 @@ function buildCharts(sample) {
     ];
 
     var pieLayout = {
-      margin: { t: 0, l: 0 }s
+      margin: { t: 0, l: 0 }
     };
 
     Plotly.plot("pie", pieData, pieLayout);
